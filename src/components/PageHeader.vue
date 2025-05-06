@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const isMenuOpen = ref(false);
+const isLoaded = ref(false);
 const sections = [
   { id: 'accueil', label: 'Accueil' },
   { id: 'apropos', label: 'À Propos' },
@@ -9,6 +10,12 @@ const sections = [
   { id: 'projets', label: 'Projets' },
   { id: 'contact', label: 'Contact' }
 ];
+
+onMounted(() => {
+  setTimeout(() => {
+    isLoaded.value = true;
+  }, 500);
+});
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
@@ -24,7 +31,7 @@ const scrollToSection = (sectionId) => {
 </script>
 
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :class="{ 'loaded': isLoaded }">
     <div class="nav-links" :class="{ 'active': isMenuOpen }">
       <button class="menu-toggle" @click="toggleMenu" :aria-expanded="isMenuOpen">
         <span class="hamburger" :class="{ 'active': isMenuOpen }">
@@ -37,8 +44,12 @@ const scrollToSection = (sectionId) => {
         <span class="close-icon">×</span>
       </button>
       <ul>
-        <li v-for="section in sections" :key="section.id">
-          <a href="#" @click.prevent="scrollToSection(section.id)">{{ section.label }}</a>
+        <li v-for="(section, index) in sections" :key="section.id" 
+            :style="{ '--delay': `${index * 0.1}s` }">
+          <a href="#" @click.prevent="scrollToSection(section.id)" class="nav-link">
+            <span class="nav-text">{{ section.label }}</span>
+            <span class="nav-background"></span>
+          </a>
         </li>
       </ul>
     </div>
@@ -60,6 +71,15 @@ const scrollToSection = (sectionId) => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar.loaded {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .nav-links {
@@ -78,36 +98,68 @@ const scrollToSection = (sectionId) => {
   padding: 0;
 }
 
-.nav-links a {
+.nav-links li {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+  animation-delay: var(--delay);
+}
+
+.nav-link {
   color: #E5E7EB;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s ease;
   position: relative;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 1rem;
+  display: block;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
 }
 
-.nav-links a::after {
-  content: '';
+.nav-text {
+  position: relative;
+  z-index: 2;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.nav-background {
   position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(45deg, #60A5FA, #34D399);
-  transition: width 0.3s ease;
+  border-radius: 4px;
+  opacity: 0;
+  transform: translateZ(-1px);
+  transition: opacity 0.3s ease;
 }
 
-.nav-links a:hover {
-  color: #60A5FA;
-  background: rgba(96, 165, 250, 0.1);
+.nav-link:hover {
+  transform: translateZ(20px) rotateX(10deg);
 }
 
-.nav-links a:hover::after {
-  width: 80%;
+.nav-link:hover .nav-text {
+  transform: translateZ(30px);
+}
+
+.nav-link:hover .nav-background {
+  opacity: 0.1;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .menu-toggle {
@@ -118,12 +170,19 @@ const scrollToSection = (sectionId) => {
   padding: 0.5rem;
   position: absolute;
   right: 1rem;
+  transform: translateZ(0);
+  transition: transform 0.3s ease;
+}
+
+.menu-toggle:hover {
+  transform: translateZ(10px);
 }
 
 .hamburger {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transform-style: preserve-3d;
 }
 
 .hamburger span {
@@ -132,6 +191,7 @@ const scrollToSection = (sectionId) => {
   height: 2px;
   background: #E5E7EB;
   transition: all 0.3s ease;
+  transform-origin: center;
 }
 
 .close-menu {
@@ -145,11 +205,13 @@ const scrollToSection = (sectionId) => {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  transform: translateZ(0);
 }
 
 .close-menu:hover {
   color: #60A5FA;
+  transform: translateZ(10px) rotate(90deg);
 }
 
 @media (max-width: 768px) {

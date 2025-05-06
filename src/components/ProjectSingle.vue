@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+
 const props = defineProps({
     project: {
         type: Object,
@@ -9,139 +10,195 @@ const props = defineProps({
         type: Boolean,
         required: false
     }
-})
-    let fadeInElements = ref()
+});
 
-    onMounted(() => {
-        fadeInElements.value = Array.from(document.getElementsByClassName('fade-in'))
-        document.addEventListener('scroll', handleScroll)
-    })
+let fadeInElements = ref();
 
-    onUnmounted(() =>{
-        document.removeEventListener('scroll', handleScroll)
-    })
+onMounted(() => {
+    fadeInElements.value = Array.from(document.getElementsByClassName('fade-in'));
+    document.addEventListener('scroll', handleScroll);
+});
 
-    const handleScroll = () => {
-        for(let i=0; i< fadeInElements.value.length; i++){
-            const elem = fadeInElements.value[i]
-            if(isElemVisible(elem)){
-                elem.style.opacity = '1'
-                elem.style.transform = 'scale(1)'
-                fadeInElements.value.splice(i, 1)
-            }
+onUnmounted(() => {
+    document.removeEventListener('scroll', handleScroll);
+});
+
+const handleScroll = () => {
+    for(let i = 0; i < fadeInElements.value.length; i++) {
+        const elem = fadeInElements.value[i];
+        if(isElemVisible(elem)) {
+            elem.style.opacity = '1';
+            elem.style.transform = 'translateY(0)';
+            fadeInElements.value.splice(i, 1);
         }
     }
-    const isElemVisible = (el) => {
-        const rect = el.getBoundingClientRect()
-        const elemTop = rect.top + 200 
-        const elemBottom = rect.bottom
-        return elemTop < window.innerHeight && elemBottom >= 0
-    }
+};
 
-    const getProjectTags = () => {
-        return props.project.tags.split(';');
-    }
+const isElemVisible = (el) => {
+    const rect = el.getBoundingClientRect();
+    const elemTop = rect.top + 200;
+    const elemBottom = rect.bottom;
+    return elemTop < window.innerHeight && elemBottom >= 0;
+};
 
-    const getProjectTasks = () => {
-        return props.project.tasks.split(';');
-    }
+const getProjectTags = () => {
+    return props.project.tags.split(';');
+};
+
+const getProjectTasks = () => {
+    return props.project.tasks.split(';');
+};
 </script>
 
 <template>
-    <div class="project">
-        <div class="left fade-in" :class="reverse ? 'reverse' : ''">
-            <h3 class="text-highlight-1">{{ project.name }}</h3>
-            <a :href="`/src/assets/${ project.image}`" target="_blank">
-                <img :src="`/src/assets/${ project.image}`" :alt="project.name">
-            </a>
-        </div>
-        
-        <div class="right fade-in">
-            <p class="tag" v-for="tag in getProjectTags()">{{ tag }}</p>
-            <p class="description">
-                {{ project.description }}
-            </p>
-            <p class="tasks">
-                <span v-for="task in getProjectTasks()"><span class="text-highlight-2">✓</span> {{ task }}<br/></span>
-            </p>
+    <div class="project" :class="{ 'reverse': reverse }">
+        <div class="project-content fade-in">
+            <div class="project-image">
+                <img :src="`/src/assets/${project.image}`" :alt="project.name">
+            </div>
+            <div class="project-info">
+                <h3 class="project-title">{{ project.name }}</h3>
+                <div class="project-tags">
+                    <span v-for="tag in getProjectTags()" :key="tag" class="tag">{{ tag }}</span>
+                </div>
+                <p class="project-description">{{ project.description }}</p>
+                <ul class="project-tasks">
+                    <li v-for="task in getProjectTasks()" :key="task">
+                        <span class="task-icon">✓</span>
+                        <span class="task-text">{{ task }}</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-    .project {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(1, 1fr);
-        grid-column-gap: 20px;
-        grid-row-gap: 50px;
-        margin-top: 35px;
+.project {
+    width: 100%;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.project-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: rgba(31, 41, 55, 0.5);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(96, 165, 250, 0.1);
+}
+
+.project-image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.project-image:hover img {
+    transform: scale(1.05);
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.project-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #60A5FA;
+    margin: 0;
+}
+
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60A5FA;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.project-description {
+    color: #E5E7EB;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.project-tasks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.project-tasks li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #E5E7EB;
+}
+
+.task-icon {
+    color: #34D399;
+    font-weight: bold;
+}
+
+.task-text {
+    font-size: 0.875rem;
+}
+
+.reverse .project-content {
+    direction: rtl;
+}
+
+.reverse .project-info {
+    direction: ltr;
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+@media (max-width: 768px) {
+    .project-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
     }
 
-    .project .left h3 {
-        font-weight: bold;
-        font-size: 20px;
-        margin-bottom: 10px;
+    .project-image {
+        height: 200px;
     }
 
-    .project .left img {
-        width: 100%;
+    .reverse .project-content {
+        direction: ltr;
     }
-
-    .project .right {
-        padding-top: 40px;
-    }
-
-    .project .right .tag {
-        display: block;
-        float: left;
-        background-color: #333746;
-        padding: 8px 16px;
-        margin-right: 12px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
-
-    .project .right .description {
-        clear: both;
-        margin-top: 50px;
-        font-size: 17px;
-    }
-
-    .project .right .tasks {
-        margin-top: 20px;
-        font-size: 17px;
-    }
-
-    .reverse {
-        order: 1;
-    }
-
-    .fade-in {   
-        opacity: 0;  
-        transition: 0.3s all ease-out;  
-        transform: scale(0.8);  
-        display: inline-block; 
-    }
-
-    @media screen and (max-width: 905px) {
-        .project {
-            grid-template-columns: repeat(1, 1fr);
-            grid-template-rows: repeat(1, 1fr);
-            grid-column-gap: 0px;
-            grid-row-gap: 20px;
-        }
-        .project .right {
-            padding-top: 0px;
-        }
-        .reverse {
-            order: 0;
-        }
-    }
-
-    @media screen and (max-width: 450px) {
-        .project .right .tag {
-            margin-bottom: 10px;
-        }
-    }
+}
 </style>
