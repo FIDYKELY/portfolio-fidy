@@ -16,5 +16,6 @@
     .social-img{
         margin-right: 10px;
         filter: opacity(0.8);
+        border-radius: 50%;
     }
 </style>

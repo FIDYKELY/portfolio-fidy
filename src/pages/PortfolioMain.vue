@@ -89,7 +89,7 @@ onMounted(() => {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
-  width: 100vw;
+  width: 100%;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
