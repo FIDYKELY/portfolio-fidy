@@ -20,9 +20,19 @@ onMounted(() => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
         currentSection.value = entry.target.id;
+        // Ajouter une animation de parallaxe subtile
+        entry.target.style.transform = 'translateY(0) scale(1)';
+        entry.target.style.opacity = '1';
+      } else {
+        // Réinitialiser l'animation quand la section n'est plus visible
+        entry.target.style.transform = 'translateY(50px) scale(0.98)';
+        entry.target.style.opacity = '0';
       }
     });
-  }, { threshold: 0.3 });
+  }, { 
+    threshold: 0.2,
+    rootMargin: '-50px'
+  });
 
   document.querySelectorAll('.section').forEach(section => {
     observer.observe(section);
@@ -88,7 +98,7 @@ onMounted(() => {
   color: #E5E7EB;
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
   margin: 0;
   padding: 0;
@@ -136,13 +146,14 @@ onMounted(() => {
   margin: 0;
   padding: 0;
   opacity: 0;
-  transform: translateY(50px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(50px) scale(0.98);
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
 }
 
 .section.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 .section::before {
@@ -155,7 +166,7 @@ onMounted(() => {
   background: linear-gradient(45deg, rgba(96, 165, 250, 0.1), rgba(52, 211, 153, 0.1));
   transform: translateZ(-1px);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .section:hover::before {
@@ -173,8 +184,9 @@ onMounted(() => {
   padding: 0;
   opacity: 0;
   transform: translateY(30px);
-  animation: fadeInUp 0.8s ease forwards;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: calc(var(--section-index, 0) * 0.2s);
+  will-change: transform, opacity;
 }
 
 .section-title {
@@ -186,10 +198,11 @@ onMounted(() => {
   background-clip: text;
   color: transparent;
   transform: translateZ(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   padding: 0 1rem;
   position: relative;
   overflow: hidden;
+  will-change: transform;
 }
 
 .section-title::after {
@@ -202,7 +215,7 @@ onMounted(() => {
   background: linear-gradient(45deg, #60A5FA, #34D399);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.6s ease;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .section.visible .section-title::after {

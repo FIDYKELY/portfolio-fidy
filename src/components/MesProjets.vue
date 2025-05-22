@@ -49,7 +49,7 @@ let projects = ref([
 </script>
 
 <template>
-    <div id="projects" class="projects-container">
+    <div id="projects" class="projects-container section fade-in">
         <h2 class="text-highlight-1 section-title">Quelques projets</h2>
         <div class="projects-grid">
             <ProjectSingle 

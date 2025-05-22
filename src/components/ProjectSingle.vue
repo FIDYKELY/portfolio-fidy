@@ -78,8 +78,9 @@ const getProjectTasks = () => {
     width: 100%;
     margin-bottom: 2rem;
     opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
+    transform: translateY(30px) scale(0.98);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
 }
 
 .project-content {
@@ -92,6 +93,14 @@ const getProjectTasks = () => {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(96, 165, 250, 0.1);
+    transform: translateZ(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.project-content:hover {
+    transform: translateZ(20px);
+    box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
 }
 
 .project-image {
@@ -100,13 +109,21 @@ const getProjectTasks = () => {
     overflow: hidden;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: translateZ(0);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.project-image:hover {
+    transform: translateZ(30px);
 }
 
 .project-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
 
 .project-image:hover img {
@@ -117,6 +134,13 @@ const getProjectTasks = () => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    transform: translateZ(0);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+}
+
+.project-content:hover .project-info {
+    transform: translateZ(40px);
 }
 
 .project-title {
@@ -124,6 +148,11 @@ const getProjectTasks = () => {
     font-weight: 600;
     color: #60A5FA;
     margin: 0;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-content:hover .project-title {
+    color: #34D399;
 }
 
 .project-tags {
@@ -139,6 +168,13 @@ const getProjectTasks = () => {
     border-radius: 1rem;
     font-size: 0.875rem;
     font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-content:hover .tag {
+    background: rgba(52, 211, 153, 0.1);
+    color: #34D399;
+    transform: translateY(-2px);
 }
 
 .project-description {
@@ -182,8 +218,14 @@ const getProjectTasks = () => {
 
 .fade-in {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateY(30px) scale(0.98);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
 }
 
 @media (max-width: 768px) {
